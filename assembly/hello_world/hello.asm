@@ -12,7 +12,7 @@ _start:                          ; Linker entrypoint
 
 section     .data
 
-msg     db  'Hello, world!',0xa  ; Message to write.
+msg     db  'hello world',0xa    ; Message to write.
                                  ; msg = global variable pointing to the string
                                  ; db (data byte) means assembler should emit the data as bytes
                                  ; 0xa = hexadecimal value for ASCII newline character

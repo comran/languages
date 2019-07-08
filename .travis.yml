@@ -1,0 +1,11 @@
+os:
+  - linux
+
+addons:
+    apt:
+      packages:
+        - go
+        - nasm
+
+script:
+ - ./bash/testing/test_all.sh
