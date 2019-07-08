@@ -8,4 +8,4 @@ addons:
         - nasm
 
 script:
- - ./bash/testing/test_all.sh
+ - bash ./bash/testing/test_all.sh
