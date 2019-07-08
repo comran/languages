@@ -4,6 +4,7 @@ os:
 addons:
     apt:
       packages:
+        - clisp
         - golang-go
         - nasm
 
