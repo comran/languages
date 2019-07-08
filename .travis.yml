@@ -4,7 +4,7 @@ os:
 addons:
     apt:
       packages:
-        - go
+        - golang-go
         - nasm
 
 script:
