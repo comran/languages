@@ -1,1 +1,3 @@
 *.swp
+Cargo.lock
+/rust/pendulum/target

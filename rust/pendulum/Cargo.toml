@@ -1,0 +1,8 @@
+[package]
+name = "pendulum"
+version = "0.1.0"
+authors = ["Comran Morshed"]
+
+[dependencies]
+nalgebra = "*"
+rand = "*"
