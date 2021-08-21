@@ -3,6 +3,7 @@ extern crate rand;
 
 use na::Vector2;
 use rand::distributions::{Distribution, Uniform};
+use std::thread;
 
 ////////////////////////////////////////////////////////////////////////////////
 // Constants
@@ -13,7 +14,7 @@ const MASS_KG: f64 = 1.0;
 const TIMESTEP_S: f64 = 1.0 / 1000.0;
 const CONVERGENCE_TOLERANCE_RADIANS: f64 = 1.0 * std::f64::consts::PI / 180.0;
 const STABILITY_TIME_S: f64 = 5.0;
-const RANDOM_WALK_NUMBER_OF_SIMS: i32 = 300;
+const RANDOM_WALK_NUMBER_OF_SIMS: i32 = 500;
 
 ////////////////////////////////////////////////////////////////////////////////
 
@@ -64,7 +65,7 @@ fn pendulum_simulation(
     return stability_timer_start;
 }
 
-fn random_walk_pendulum_tune(number_of_sims: i32) -> f64 {
+fn random_walk_pendulum_tune(number_of_sims: i32) -> Vector2<f64> {
     let damping_factor_distribution = Uniform::from(1.0..5.0);
     let mut rng = rand::thread_rng();
     let mut best_stability_timer_start = f64::NAN;
@@ -86,16 +87,35 @@ fn random_walk_pendulum_tune(number_of_sims: i32) -> f64 {
             best_stability_timer_start = stability_timer_start;
             best_damping_factor = damping_factor_sample;
         }
-        println!(
-            "Convergence for damping = {} kg*s took {} seconds",
-            damping_factor_sample, stability_timer_start
-        );
     }
 
-    return best_damping_factor;
+    let result = Vector2::new(best_damping_factor, best_stability_timer_start);
+    return result;
 }
 
 fn main() {
-    let best_damping_factor = random_walk_pendulum_tune(RANDOM_WALK_NUMBER_OF_SIMS);
-    println!("Best damping was {} kg*s", best_damping_factor);
+    let mut handles = Vec::new();
+
+    // Spawn multiple threads to run simulations.
+    for _i in 0..8 {
+        let handle = thread::spawn(|| {
+            let thread_best_damping_factor = random_walk_pendulum_tune(RANDOM_WALK_NUMBER_OF_SIMS);
+
+            thread_best_damping_factor
+        });
+
+        handles.push(handle);
+    }
+
+    // Wait for workers to finish, and determine the best result.
+    let mut best_damping_pair: Vector2<f64> = Vector2::new(f64::NAN, f64::NAN);
+    for handle in handles {
+        let handle_best_damping_pair = handle.join().unwrap();
+
+        if best_damping_pair[1].is_nan() || handle_best_damping_pair[1] < best_damping_pair[1] {
+            best_damping_pair = handle_best_damping_pair;
+        }
+    }
+
+    println!("Best damping: {}", best_damping_pair[0]);
 }
