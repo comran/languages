@@ -159,7 +159,8 @@ fn main() {
         if best_damping_pair[1].is_nan() || handle_best_damping_pair[1] < best_damping_pair[1] {
             best_damping_pair = handle_best_damping_pair;
         }
+        println!("Thread best damping: {}", handle_best_damping_pair[0]);
     }
 
-    println!("Best damping: {}", best_damping_pair[0]);
+    println!("Overall best damping: {}", best_damping_pair[0]);
 }
