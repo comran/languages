@@ -8,16 +8,40 @@ use std::thread;
 ////////////////////////////////////////////////////////////////////////////////
 // Constants
 
+// Acceleration due to gravity (m/s/s)
 const GRAVITY_ACC_M_PER_S_PER_S: f64 = 9.81;
+
+// Length of the pendulum (meters)
 const LENGTH_M: f64 = 1.0;
+
+// Mass of the end of the pendulum (kilograms)
 const MASS_KG: f64 = 1.0;
+
+// Discrete timestep to use in simulations (seconds)
 const TIMESTEP_S: f64 = 1.0 / 1000.0;
+
+// Angle tolerance to use for determining steady state (radians)
 const CONVERGENCE_TOLERANCE_RADIANS: f64 = 1.0 * std::f64::consts::PI / 180.0;
+
+// Time that pendulum is required to spend under the angle tolerance to be declared
+// in steady state (seconds)
 const STABILITY_TIME_S: f64 = 5.0;
-const RANDOM_WALK_NUMBER_OF_SIMS: i32 = 500;
+
+// Number of simulations to run per thread to determine best damping factor
+const NUMBER_OF_SIMS_PER_THREAD: i32 = 500;
 
 ////////////////////////////////////////////////////////////////////////////////
 
+// Finds the derivative at the current state for a pendulum model.
+//
+// # Arguments
+// * `state` - Vector [angle position, angular velocity] representing pendulum state
+// * `damping_factor_kg_s` - Damping factor of the pendulum (kg * s)
+// * `length_m` - Pendulum length (meters)
+// * `mass_kg` - Pendulum end-mass (kilograms)
+//
+// # Returns
+// * Vector [delta angle position, delta angular velocity] representing the state change
 fn pendulum_step(
     state: Vector2<f64>,
     damping_factor_kg_s: f64,
@@ -33,6 +57,17 @@ fn pendulum_step(
     return state_delta;
 }
 
+// Solves an initial value problem for a pendulum, and ends when steady state is reached.
+//
+// # Arguments
+// * `initial_state` - Vector [angle position, angular velocity] representing initial state
+// * `timestep_s` - Discrete time step to use (seconds)
+// * `damping_factor_kg_s` - Damping factor of the pendulum (kg * s)
+// * `length_m` - Pendulum length (meters)
+// * `mass_kg` - Pendulum end-mass (kilograms)
+//
+// # Returns
+// * Float (64 bits) representing time elapsed until steady state
 fn pendulum_simulation(
     initial_state: Vector2<f64>,
     timestep_s: f64,
@@ -52,8 +87,10 @@ fn pendulum_simulation(
 
         if state[0] < CONVERGENCE_TOLERANCE_RADIANS {
             if stability_timer_start.is_nan() {
+                // Position is near steady state, so start the stability timer.
                 stability_timer_start = current_time;
             } else if current_time - stability_timer_start > STABILITY_TIME_S {
+                // Stability requirements met, so end the sim.
                 break;
             }
         } else {
@@ -65,6 +102,13 @@ fn pendulum_simulation(
     return stability_timer_start;
 }
 
+// Runs a certain number of sims with randomized damping factors, and returns the best one.
+//
+// # Arguments
+// * `number_of_sims` - Number of simulations to run
+//
+// # Returns
+// * Vector [best damping factor, damping factor stabilize time] representing the best sim outcome
 fn random_walk_pendulum_tune(number_of_sims: i32) -> Vector2<f64> {
     let damping_factor_distribution = Uniform::from(1.0..5.0);
     let mut rng = rand::thread_rng();
@@ -99,7 +143,7 @@ fn main() {
     // Spawn multiple threads to run simulations.
     for _i in 0..8 {
         let handle = thread::spawn(|| {
-            let thread_best_damping_factor = random_walk_pendulum_tune(RANDOM_WALK_NUMBER_OF_SIMS);
+            let thread_best_damping_factor = random_walk_pendulum_tune(NUMBER_OF_SIMS_PER_THREAD);
 
             thread_best_damping_factor
         });
