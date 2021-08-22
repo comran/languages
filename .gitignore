@@ -1,3 +1,4 @@
 *.swp
 Cargo.lock
 /rust/pendulum/target
+/python/letter_classifier/data
