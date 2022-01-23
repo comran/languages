@@ -13,4 +13,3 @@ nasm -f elf64 hello.asm
 ld -s -o hello hello.o
 
 compare_output "$(test_name)" "$(./hello)" "hello world"
-

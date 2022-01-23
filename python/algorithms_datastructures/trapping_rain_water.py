@@ -30,7 +30,6 @@ def trap(height: List[int]) -> int:
             d_acc = j_max - height[j]
             j -= 1
 
-        print((i_max, j_max, d_acc))
         acc += d_acc
 
     return acc

@@ -2,3 +2,5 @@
 Cargo.lock
 /rust/pendulum/target
 /python/letter_classifier/data
+/assembly/hello_world/hello
+/assembly/hello_world/hello.o

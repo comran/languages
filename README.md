@@ -1,4 +1,4 @@
 # Languages
-[![Build Status](https://travis-ci.org/comran/languages.svg?branch=master)](https://travis-ci.org/comran/languages)
+[![Build Status](https://app.travis-ci.com/comran/languages.svg?branch=main)](https://app.travis-ci.com/comran/languages)
 
 Some exploration of different programming languages
