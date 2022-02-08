@@ -1,4 +1,6 @@
 *.swp
+a.out
+.vscode
 Cargo.lock
 /rust/pendulum/target
 /python/letter_classifier/data
