@@ -1,3 +1,5 @@
+# LC 94, 144, 145
+
 class TreeNode:
     def __init__(self, val=0, left=None, right=None):
         self.val = val
@@ -81,6 +83,19 @@ def postorder_iterative(root):
         ans.append(node.val)
 
     return ans
+
+
+def postorder_iterative_reversal(root):
+    ans, stack = [], [root]
+
+    while stack:
+        node = stack.pop()
+        if node:
+            ans.append(node.val)
+            stack.append(node.left)
+            stack.append(node.right)
+
+    return ans[::-1]
 
 
 def inorder_iterative(root):
