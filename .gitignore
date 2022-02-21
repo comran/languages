@@ -2,6 +2,7 @@
 a.out
 .vscode
 Cargo.lock
+target
 /rust/pendulum/target
 /python/letter_classifier/data
 /assembly/hello_world/hello
